@@ -57,6 +57,8 @@ The bot jumps between a configured set of coins on the condition that it does no
 
 ## Tool Setup
 
+> **Requirements:** Python **3.11** (reference version; the pins in `requirements.txt` are validated on 3.11). Note that Python 3.8 reached end-of-life in October 2024 and is no longer supported.
+
 ### Install Python dependencies
 
 Run the following line in the terminal: `pip install -r requirements.txt`.
