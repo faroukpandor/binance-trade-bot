@@ -1,0 +1,48 @@
+# 24/7 TESTNET stack for the 30-day experiment.
+#
+# Differences from docker-compose.yml (mainnet):
+#   - builds the image locally from this repo (includes the fixed dependency pins)
+#   - the bot reads testnet=true from ./user.cfg (see docs/TESTNET-RUNBOOK.md)
+#   - restart: unless-stopped so the experiment survives crashes and reboots
+#   - the API server is bound to 127.0.0.1 ONLY (it is unauthenticated)
+#
+# Start:  docker compose -f docker-compose.testnet.yml up -d --build
+# Stop:   docker compose -f docker-compose.testnet.yml down
+# Logs:   docker logs -f binance_trader_testnet
+
+version: "3"
+
+services:
+  crypto-trading:
+    build: .
+    image: binance-trade-bot:local
+    container_name: binance_trader_testnet
+    working_dir: /app
+    volumes:
+      - ./user.cfg:/app/user.cfg:ro
+      - ./supported_coin_list:/app/supported_coin_list:ro
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config:/app/config:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    command: python -m binance_trade_bot
+
+  api:
+    build: .
+    image: binance-trade-bot:local
+    container_name: binance_trader_api_testnet
+    working_dir: /app
+    volumes:
+      - ./user.cfg:/app/user.cfg:ro
+      - ./data:/app/data
+      - ./logs:/app/logs
+    ports:
+      # unauthenticated API: localhost only. View remotely via SSH tunnel:
+      #   ssh -L 5123:127.0.0.1:5123 user@your-server
+      - "127.0.0.1:5123:5123"
+    restart: unless-stopped
+    command: gunicorn binance_trade_bot.api_server:app -k eventlet -w 1 --threads 1 -b 0.0.0.0:5123
+    depends_on:
+      - crypto-trading

@@ -25,13 +25,18 @@ config = Config()
 db = Database(logger, config)
 
 
-def filter_period(query, model):  # pylint: disable=inconsistent-return-statements
+def filter_period(query, model):
     period = request.args.get("period", "all")
 
     if period == "all":
         return query
 
-    num = float(re.search(r"(\d*)[shdwm]", "1d").group(1))
+    match = re.fullmatch(r"(\d+)([shdwm])", period)
+    if match is None:
+        # An unparseable period filters nothing rather than raising an error
+        return query
+
+    num = float(match.group(1))
 
     if "s" in period:
         return query.filter(model.datetime >= datetime.now() - timedelta(seconds=num))
@@ -41,8 +46,8 @@ def filter_period(query, model):  # pylint: disable=inconsistent-return-statemen
         return query.filter(model.datetime >= datetime.now() - timedelta(days=num))
     if "w" in period:
         return query.filter(model.datetime >= datetime.now() - timedelta(weeks=num))
-    if "m" in period:
-        return query.filter(model.datetime >= datetime.now() - timedelta(days=28 * num))
+    # "m" (months) are approximated as 28 days
+    return query.filter(model.datetime >= datetime.now() - timedelta(days=28 * num))
 
 
 @app.route("/api/value_history/<coin>")
