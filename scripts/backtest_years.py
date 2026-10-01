@@ -77,8 +77,9 @@ def main():
 
     try:
         import requests
-        from binance_trade_bot.backtest import backtest as run_backtest
+
         from binance_trade_bot.auto_trader import AutoTrader
+        from binance_trade_bot.backtest import backtest as run_backtest
     except ImportError as exc:  # pragma: no cover
         print(f"Missing dependencies ({exc}). Run inside the project environment: pip install -r requirements.txt")
         return 1
@@ -147,7 +148,10 @@ def main():
             else:
                 # light progress heartbeat on every yield
                 usd = manager.collate_coins(manager.config.BRIDGE.symbol)
-                print(f"  ... {str(manager.datetime):<20} {manager.config.BRIDGE.symbol}: {usd:>10.2f}  hops: {hops['n']}", flush=True)
+                print(
+                    f"  ... {str(manager.datetime):<20} {manager.config.BRIDGE.symbol}: {usd:>10.2f}  hops: {hops['n']}",
+                    flush=True,
+                )
     except StopIteration as stop:
         final_manager = stop.value
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
@@ -181,7 +185,9 @@ def main():
     hold_pct = ((last[4] / first[4]) - 1) * 100 if first[4] else float("nan")
     btc_hold_pct = (last[3] / first[3] - 1) * 100
 
-    print(f"Strategy (hopping):    {strategy_pct:+8.2f}%  ({first[2]:.2f} -> {last[2]:.2f} {args.bridge}, {hops['n']} hops)")
+    print(
+        f"Strategy (hopping):    {strategy_pct:+8.2f}%  ({first[2]:.2f} -> {last[2]:.2f} {args.bridge}, {hops['n']} hops)"
+    )
     print(f"Strategy in BTC terms: {btc_hold_pct:+8.2f}%  (start {first[3]:.6f} -> end {last[3]:.6f} BTC)")
     print(f"Hold {starting_coin}:        {hold_pct:+8.2f}%  (do-nothing benchmark)")
     print(f"Hold {args.bridge}:        {0.0:+8.2f}%  (baseline)")

@@ -102,9 +102,7 @@ def main():
     print(f"\nRows: {counts}")
 
     # --- current coin --------------------------------------------------------
-    row = conn.execute(
-        "SELECT coin_id, datetime FROM current_coin_history ORDER BY datetime DESC LIMIT 1"
-    ).fetchone()
+    row = conn.execute("SELECT coin_id, datetime FROM current_coin_history ORDER BY datetime DESC LIMIT 1").fetchone()
     if row:
         held_since = fmt_dt(row[1])
         try:

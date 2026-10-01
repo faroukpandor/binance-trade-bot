@@ -72,6 +72,7 @@ repos:
     - gunicorn==23.0.0
     - itsdangerous==2.1.2
     - pylint-sqlalchemy
+    - pytest==8.3.4
     - python-binance==1.0.27
     - python-socketio[client]==5.11.3
     - schedule==1.1.0

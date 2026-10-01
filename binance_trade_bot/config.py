@@ -13,6 +13,12 @@ class Config:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
         # Init config
         config = configparser.ConfigParser()
         config["DEFAULT"] = {
+            # Defaults for options that used to crash Config() with
+            # NoOptionError when user.cfg was missing or incomplete
+            "api_key": "",
+            "api_secret_key": "",
+            # Starting coin, empty means "the bot picks one at random"
+            "current_coin": "",
             "bridge": "USDT",
             "use_margin": "no",
             "scout_multiplier": "5",
