@@ -124,6 +124,10 @@ If you are interested in running a Telegram bot, more information can be found a
 python -m binance_trade_bot
 ```
 
+To validate the bot safely before using real funds — a 30-day testnet run and
+an honest multi-year backtest — follow
+[`docs/TESTNET-RUNBOOK.md`](docs/TESTNET-RUNBOOK.md).
+
 ### Run the server that returns the information
 
 ```shell
