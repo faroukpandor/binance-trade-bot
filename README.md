@@ -25,6 +25,27 @@ https://t.me/binancetradebotchat
 
 ## Why?
 
+**This is the simplest self-hosted spot trading bot for Binance: one strategy, one config file, ~300 MB of RAM, and your API keys never leave your machine.**
+
+Not sure which bot you need?
+
+| You want... | Use |
+|---|---|
+| A 60-second setup, one coin-hopping strategy, a cheap VPS | **This bot** |
+| To write your own Python strategies, ML, 30+ exchanges | [freqtrade](https://github.com/freqtrade/freqtrade) |
+| Professional market making / arbitrage | [hummingbot](https://github.com/hummingbot/hummingbot) |
+| A GUI with managed cloud hosting ($9.99+/mo) | [OctoBot](https://github.com/Drakkar-Software/OctoBot) |
+
+### 60-second testnet quickstart (free, fake money, no risk)
+
+```shell
+./scripts/quickstart.sh
+```
+
+That is the whole setup: it asks for free testnet keys ([testnet.binance.vision](https://testnet.binance.vision) — log in with GitHub), writes the config, and starts the bot in Docker. When you want honest numbers before risking anything, follow [`docs/TESTNET-RUNBOOK.md`](docs/TESTNET-RUNBOOK.md) — a 30-day testnet plan plus a multi-year backtest that benchmarks the strategy against simply doing nothing.
+
+### The trading idea
+
 This project was inspired by the observation that all cryptocurrencies pretty much behave in the same way. When one spikes, they all spike, and when one takes a dive, they all do. _Pretty much_. Moreover, all coins follow Bitcoin's lead; the difference is their phase offset.
 
 So, if coins are basically oscillating with respect to each other, it seems smart to trade the rising coin for the falling coin, and then trade back when the ratio is reversed.

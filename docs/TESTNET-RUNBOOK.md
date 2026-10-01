@@ -3,6 +3,10 @@
 This is the operational plan for validating the bot before any real money is
 used. It has two independent parts:
 
+> **Fast path:** `./scripts/quickstart.sh` automates steps A1–A4 (config
+> generation, coin-list trim, stack start). Read this runbook for the full
+> plan, the caveats and the decision criteria.
+
 | Part | Question it answers | Environment | Cost |
 |---|---|---|---|
 | A. 30-day testnet run | Does the bot *function* 24/7 — connect, scout, place orders, survive restarts, respect min-notional? | Binance **spot testnet** (fake funds) | 0 |
