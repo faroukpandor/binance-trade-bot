@@ -15,7 +15,7 @@ from .models import Coin
 
 
 class BinanceAPIManager:
-    def __init__(self, config: Config, db: Database, logger: Logger, testnet = False):
+    def __init__(self, config: Config, db: Database, logger: Logger, testnet=False):
         # initializing the client class calls `ping` API endpoint, verifying the connection
         self.binance_client = Client(
             config.BINANCE_API_KEY,
@@ -43,17 +43,14 @@ class BinanceAPIManager:
     @cached(cache=TTLCache(maxsize=1, ttl=43200))
     def get_trade_fees(self) -> Dict[str, float]:
         if not self.testnet:
-            return {ticker["symbol"]: float(ticker["takerCommission"]) for ticker in self.binance_client.get_trade_fee()}
-
+            return {
+                ticker["symbol"]: float(ticker["takerCommission"]) for ticker in self.binance_client.get_trade_fee()
+            }
 
         ## testnet does not provide trade fee API, emulating it
         exchange_info = self.binance_client.get_exchange_info()
         symbols = exchange_info["symbols"]
-        return {
-            symbol["symbol"]: 0.001
-            for symbol in symbols
-        }
-
+        return {symbol["symbol"]: 0.001 for symbol in symbols}
 
     @cached(cache=TTLCache(maxsize=1, ttl=60))
     def get_using_bnb_for_fees(self):

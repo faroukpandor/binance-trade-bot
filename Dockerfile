@@ -1,13 +1,11 @@
-FROM --platform=$BUILDPLATFORM python:3.8 as builder
+FROM python:3.11-slim as builder
 
 WORKDIR /install
-
-RUN apt-get update && apt-get install -y rustc
 
 COPY requirements.txt /requirements.txt
 RUN pip install --prefix=/install -r /requirements.txt
 
-FROM python:3.13.2-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 

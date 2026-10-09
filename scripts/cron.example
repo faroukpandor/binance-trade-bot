@@ -1,0 +1,16 @@
+# Automation for the 30-day testnet experiment (docs/TESTNET-RUNBOOK.md).
+# Install with:  crontab -e   (edit the /path/to/binance-trade-bot prefix)
+#
+# Everything here is read-only or additive - none of it can lose data.
+
+# Daily health check: PASS/WARN/FAIL + "Day X of 30" (exit code 2 = bot down)
+30 6 * * * cd /path/to/binance-trade-bot && python3 scripts/healthcheck.py >> logs/healthcheck.log 2>&1
+
+# Weekly report snapshot (portfolio value time series to CSV)
+0 8 * * 1 cd /path/to/binance-trade-bot && python3 scripts/report.py --csv "data/report_$(date +\%F).csv" >> logs/healthcheck.log 2>&1
+
+# Weekly log trim (the bot does not rotate its own logs; keep 4 weeks of output)
+0 3 * * 0 truncate -s 20M /path/to/binance-trade-bot/logs/crypto_trading.log
+
+# Daily consistent backup of the experiment database (retention: keep 30 days)
+30 2 * * * sqlite3 /path/to/binance-trade-bot/data/crypto_trading.db ".backup '/path/to/backups/crypto_trading_$(date +\%F).db'" && find /path/to/backups -name 'crypto_trading_*.db' -mtime +30 -delete
