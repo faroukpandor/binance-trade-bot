@@ -55,12 +55,19 @@ repos:
     files: ^(dev-)?requirements\.txt$
     args: [requirements.txt, dev-requirements.txt]
 
-- repo: https://github.com/pre-commit/mirrors-pylint
-  rev: v3.0.0a5
+- repo: local
   hooks:
   - id: pylint
     name: PyLint
+    entry: pylint
+    language: python
     args: [--output-format=parseable, --rcfile=.pylintrc]
+    files: \.py$
+    # Local hook instead of pre-commit/mirrors-pylint: that repo's last tag
+    # (v3.0.0a5) hard-pins an alpha pylint whose astroid cannot introspect
+    # the Python 3.11 stdlib (false E1101 on every os.* usage).
+    # The populate-pylint-requirements hook above keeps this list in sync
+    # with requirements.txt / dev-requirements.txt where possible.
     additional_dependencies:
     - Flask==2.3.2
     - Werkzeug==2.3.8
@@ -72,6 +79,7 @@ repos:
     - gunicorn==23.0.0
     - itsdangerous==2.1.2
     - pylint-sqlalchemy
+    - pylint==3.2.7
     - pytest==8.3.4
     - python-binance==1.0.27
     - python-socketio[client]==5.11.3

@@ -126,22 +126,35 @@ mkdir -p data logs
 venv/bin/python -m binance_trade_bot     # in tmux/screen/systemd
 ```
 
-### A5. Hygiene for 30 days (two cron lines)
+### A5. Install the automation crontab (5 minutes, once)
 
 The bot prunes its own history (hourly value snapshots kept 28 days, daily 1
-year, trades forever) but does **not** rotate logs. On the server, add to
-`crontab -e`:
+year, trades forever) but does **not** rotate logs or watch itself. Install
+the prepared crontab instead of hand-writing lines — it adds a daily health
+check, a weekly report snapshot, log rotation and a 30-day-rotation database
+backup:
 
-```cron
-# rotate bot logs weekly (keep 4)
-0 3 * * 0  truncate -s 20M /path/to/binance-trade-bot/logs/crypto_trading.log
-# daily consistent backup of the experiment database
-30 2 * * * sqlite3 /path/to/binance-trade-bot/data/crypto_trading.db ".backup '/path/to/backups/crypto_trading_$(date +\%F).db'"
+```bash
+cp scripts/cron.example /tmp/mycron
+# edit /tmp/mycron: replace /path/to/binance-trade-bot and /path/to/backups
+crontab -l 2>/dev/null | cat - /tmp/mycron | crontab -
+crontab -l   # verify
 ```
+
+The health check (`scripts/healthcheck.py`, pure stdlib) prints
+`PASS/WARN/FAIL` plus a `Day X of 30` counter and exits 0/1/2 — wire the exit
+code to your favourite notifier if you want alerts, or just read
+`logs/healthcheck.log` when curious.
 
 ### A6. Weekly and final measurement
 
-Any time, from the repository root:
+Daily status (also runs automatically via the crontab above):
+
+```bash
+python scripts/healthcheck.py
+```
+
+Full progress report, any time, from the repository root:
 
 ```bash
 python scripts/report.py --csv data/report_$(date +%F).csv
